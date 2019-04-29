@@ -75,6 +75,8 @@ func main() {
 }
 
 func analyzeImage(responseWriter http.ResponseWriter, request *http.Request) {
+	responseWriter.Header().Set("Access-Control-Allow-Origin", "*")
+
 	var payload Payload
 	decoder := json.NewDecoder(request.Body)
 
