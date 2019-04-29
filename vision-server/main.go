@@ -69,6 +69,8 @@ func main() {
 
 	router := mux.NewRouter()
 	router.HandleFunc("/analyze-image", analyzeImage).Methods("POST")
+
+	log.Printf("server running at %s", address)
 	log.Fatal(http.ListenAndServe(address, router))
 }
 
