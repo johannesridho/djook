@@ -136,8 +136,13 @@ func analyze(image string) {
 	}
 
 	var strBuilder strings.Builder
+	foundViolence := false
 
 	for _, response := range responses.Responses {
+		if response.SafeSearchAnnotation.Violence != "VERY_UNLIKELY" || response.SafeSearchAnnotation.Violence != "UNLIKELY" {
+			foundViolence = true
+		}
+
 		log.Println("violence : ", response.SafeSearchAnnotation.Violence)
 		log.Println("label : ", response.LabelAnnotations)
 
@@ -151,17 +156,18 @@ func analyze(image string) {
 
 	message := strBuilder.String()
 
-	var psIds []string
-	psIds = append(psIds, "3164926763533661")
-	psIds = append(psIds, "2261957987199163")
-	psIds = append(psIds, "2588420581185410")
-	psIds = append(psIds, "2183290295081563")
-	psIds = append(psIds, "2172166666192906")
+	if foundViolence {
+		var psIds []string
+		psIds = append(psIds, "3164926763533661")
+		psIds = append(psIds, "2261957987199163")
+		psIds = append(psIds, "2588420581185410")
+		psIds = append(psIds, "2183290295081563")
+		psIds = append(psIds, "2172166666192906")
 
-	for _, psId := range psIds {
-		go sendToFb(message, psId)
+		for _, psId := range psIds {
+			go sendToFb(message, psId)
+		}
 	}
-
 }
 
 func sendToFb(message string, psId string) {
