@@ -139,7 +139,7 @@ func analyze(image string) {
 	foundViolence := false
 
 	for _, response := range responses.Responses {
-		if response.SafeSearchAnnotation.Violence != "VERY_UNLIKELY" || response.SafeSearchAnnotation.Violence != "UNLIKELY" {
+		if response.SafeSearchAnnotation.Violence != "VERY_UNLIKELY" && response.SafeSearchAnnotation.Violence != "UNLIKELY" {
 			foundViolence = true
 		}
 
