@@ -151,10 +151,12 @@ func analyze(image string) {
 
 		if strings.Contains(fmt.Sprint(response.LabelAnnotations), "Knife") {
 			strBuilder.WriteString("knife\n")
+			foundViolence = true
 		}
 
 		if strings.Contains(fmt.Sprint(response.LabelAnnotations), "Bottle") {
 			strBuilder.WriteString("bottle\n")
+			foundViolence = true
 		}
 	}
 
