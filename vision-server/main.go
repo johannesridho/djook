@@ -163,6 +163,8 @@ func analyze(image string) {
 	message := strBuilder.String()
 
 	if foundViolence {
+		message += "\n" + analyzeFace(Payload{Image: image})
+
 		var psIds []string
 		psIds = append(psIds, "3164926763533661")
 		psIds = append(psIds, "2261957987199163")
@@ -174,6 +176,43 @@ func analyze(image string) {
 			go sendToFb(message, psId)
 		}
 	}
+}
+
+func analyzeFace(req Payload) string {
+	url := "https://h8-djook-person.herokuapp.com/search-person"
+
+	payload, err := json.Marshal(req)
+	res, err := http.Post(url, "application/json", bytes.NewBuffer(payload))
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	defer res.Body.Close()
+
+	responseBytes, err := ioutil.ReadAll(res.Body)
+	responseString := string(responseBytes)
+	log.Printf("received response: %s, status code: %d", responseString, res.StatusCode)
+
+	responseString = strings.Replace(responseString, "[", "", -1)
+	responseString = strings.Replace(responseString, "]", "", -1)
+	responseString = strings.Replace(responseString, "\"", "", -1)
+	persons := strings.Split(responseString, ",")
+	if err != nil {
+		panic(err)
+	}
+
+	var strBuilder strings.Builder
+
+	strBuilder.WriteString("Persons detected :\n")
+	for _, person := range persons {
+		log.Println("person : ", person)
+		strBuilder.WriteString(person + "\n")
+	}
+	if len(persons) <= 0 {
+		strBuilder.WriteString("-\n")
+	}
+
+	return strBuilder.String()
 }
 
 func sendToFb(message string, psId string) {
